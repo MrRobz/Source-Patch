@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Update text in code",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "icons": {},
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "js": ["src/content-script/content.jsx"]
+    }
+  ]
+}
+
