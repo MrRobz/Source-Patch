@@ -1,11 +1,10 @@
-import './App.css'
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App bg-neutral-100 p-6 h-full">
-      
-    </div>
-  )
+  const value = localStorage.getItem("hello");
+  localStorage.setItem("hello", "hello");
+
+  return <div className="App bg-neutral-100 p-6 h-full">{value}</div>;
 }
 
-export default App
+export default App;
