@@ -11,5 +11,6 @@
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["src/content-script/content.jsx"]
     }
-  ]
+  ],
+  "permissions": ["storage"]
 }
