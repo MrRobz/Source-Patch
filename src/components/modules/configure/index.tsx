@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from "react";
 import { getDomainFromUrl } from "../../../utils";
-import { Input, Segmented } from "../../ui";
+import { Button, Input, Segmented } from "../../ui";
 import { H1, SubTitle } from "../../ui/typography";
 import { WebsiteConfigForm } from "./types";
 
@@ -22,6 +22,10 @@ export const ConfigurePage = (): ReactElement => {
       }
     });
   }, []);
+
+  const onSumbit = () => {
+    alert("hello");
+  };
 
   return (
     <>
@@ -98,8 +102,9 @@ export const ConfigurePage = (): ReactElement => {
       </div>
 
       <div className="mt-6 flex justify-end gap-4">
-        <button>cancel</button>
-        <button>save</button>
+        <Button type="primary" onClick={onSumbit}>
+          save
+        </Button>
       </div>
     </>
   );
