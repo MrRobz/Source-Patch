@@ -15,9 +15,5 @@ const router = createMemoryRouter([
 ]);
 
 export const Routes = (): ReactElement => {
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 };

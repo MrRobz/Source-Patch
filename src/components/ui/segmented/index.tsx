@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 interface ItemType {
   label: string;
-  value: string;
+  value: any;
 }
 
 interface Props {
