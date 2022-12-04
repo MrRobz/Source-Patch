@@ -9,6 +9,10 @@ const router = createMemoryRouter([
     element: <IndexRoute />,
   },
   {
+    path: "domain/:domain",
+    element: <div>domain</div>,
+  },
+  {
     path: "/configure",
     element: <ConfigurePage />,
   },

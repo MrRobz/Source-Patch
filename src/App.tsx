@@ -1,5 +1,8 @@
 import "./App.css";
 import { Routes } from "./components/modules/routes";
+import { setupLocalForage } from "./config/setup-local-forage";
+
+setupLocalForage();
 
 function App() {
   return (

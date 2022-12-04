@@ -14,6 +14,7 @@ export const Input = ({ value, placeholder, name, className = "", onChange }: Pr
       className={`h-10 border px-3 py-4 placeholder:text-neutral-600 ${className}`}
       placeholder={placeholder}
       name={name}
+      value={value}
       onChange={(e) => onChange?.(e.target.value)}
     />
   );

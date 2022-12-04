@@ -3,6 +3,8 @@ import { getDomainFromUrl } from "../../../utils";
 import { Button, Input, Segmented } from "../../ui";
 import { H1, SubTitle } from "../../ui/typography";
 import { WebsiteConfigForm } from "./types";
+import localforage from "localforage";
+import { checkIfFormValid } from "./utils/check-if-form-valid";
 
 const yesNoOptions = [
   { label: "Yes", value: true },
@@ -10,21 +12,37 @@ const yesNoOptions = [
 ];
 
 export const ConfigurePage = (): ReactElement => {
-  const [domain, setDomain] = useState<string>();
   const [form, setForm] = useState<WebsiteConfigForm>({} as WebsiteConfigForm);
 
   useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const url = tabs[0].url;
-      if (url) {
-        const domain = getDomainFromUrl(url);
-        setDomain(domain);
-      }
-    });
+    chrome.tabs
+      .query({ active: true, currentWindow: true })
+      .then((tabs) => {
+        const url = tabs[0].url;
+        if (url) {
+          const domain = getDomainFromUrl(url);
+          setForm((prev) => ({ ...prev, domain }));
+
+          localforage
+            .getItem<WebsiteConfigForm>(`config-${domain}`)
+            .then((data) => {
+              if (data) {
+                setForm(data);
+              }
+            })
+            .catch(() => setForm({} as WebsiteConfigForm));
+        }
+      })
+      .catch(() => alert("no domain found"));
   }, []);
 
-  const onSumbit = () => {
-    alert("hello");
+  const onSumbit = async () => {
+    if (!checkIfFormValid(form)) {
+      alert("Please fill in all form fields.");
+    }
+
+    const domain = form.domain;
+    await localforage.setItem(`config-${domain}`, form);
   };
 
   return (
@@ -38,14 +56,15 @@ export const ConfigurePage = (): ReactElement => {
         <div className="mt-4 rounded bg-white p-6 shadow-sm">
           <div>
             <label className="text-lg font-semibold" htmlFor="github-url">
-              Enter the url of the github repo where <span className="text-primary-700">{domain}</span>’s code base is
-              present.
+              Enter the url of the github repo where <span className="text-primary-700">{form.domain}</span>’s code base
+              is present.
             </label>
             <div className="mt-4">
               <Input
                 placeholder="Enter github repo url"
                 className="w-full"
                 name="github-url"
+                value={form.githubRepoUrl}
                 onChange={(val) => setForm((prev) => ({ ...prev, githubRepoUrl: val }))}
               />
             </div>
