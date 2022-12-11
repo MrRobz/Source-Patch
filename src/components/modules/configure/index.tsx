@@ -5,6 +5,7 @@ import { H1, SubTitle } from "../../ui/typography";
 import { WebsiteConfigForm } from "./types";
 import localforage from "localforage";
 import { checkIfFormValid } from "./utils/check-if-form-valid";
+import { useNavigate } from "react-router-dom";
 
 const yesNoOptions = [
   { label: "Yes", value: true },
@@ -12,6 +13,7 @@ const yesNoOptions = [
 ];
 
 export const ConfigurePage = (): ReactElement => {
+  const navigate = useNavigate();
   const [form, setForm] = useState<WebsiteConfigForm>({} as WebsiteConfigForm);
 
   useEffect(() => {
@@ -43,6 +45,8 @@ export const ConfigurePage = (): ReactElement => {
 
     const domain = form.domain;
     await localforage.setItem(`config-${domain}`, form);
+
+    navigate(`/domain/${domain}`);
   };
 
   return (

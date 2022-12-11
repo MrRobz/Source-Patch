@@ -2,6 +2,7 @@ import { ReactElement, ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ReactComponent as LogoIcon } from "assets/logo.svg";
 import { ReactComponent as BookIcon } from "assets/book.svg";
+import { ReactComponent as ConfigureIcon } from "assets/configure.svg";
 
 export const ViewOrCreateChangePage = (): ReactElement => {
   const { domain } = useParams() as { domain: string };
@@ -21,6 +22,13 @@ export const ViewOrCreateChangePage = (): ReactElement => {
           desc={`View previously requested changes for "${domain}" and their status.`}
           icon={<BookIcon className="text-secondary-600" />}
           to="/domain/:domain/change-request-list"
+        />
+
+        <Card
+          title={"Configure"}
+          desc={`Configure settings for "${domain}".`}
+          icon={<ConfigureIcon className="text-neutral-600" />}
+          to="/configure"
         />
       </div>
     </div>
