@@ -2,10 +2,11 @@ import { ReactElement, useEffect, useState } from "react";
 import { getDomainFromUrl } from "../../../utils";
 import { Button, Input, Segmented } from "../../ui";
 import { H1, SubTitle } from "../../ui/typography";
-import { WebsiteConfigForm } from "./types";
 import localforage from "localforage";
 import { checkIfFormValid } from "./utils/check-if-form-valid";
 import { useNavigate } from "react-router-dom";
+import { WebsiteConfig } from "data/domain-config/types";
+import { DomainConfigApi } from "data/domain-config/api";
 
 const yesNoOptions = [
   { label: "Yes", value: true },
@@ -14,7 +15,7 @@ const yesNoOptions = [
 
 export const ConfigurePage = (): ReactElement => {
   const navigate = useNavigate();
-  const [form, setForm] = useState<WebsiteConfigForm>({} as WebsiteConfigForm);
+  const [form, setForm] = useState<WebsiteConfig>({} as WebsiteConfig);
 
   useEffect(() => {
     chrome.tabs
@@ -25,14 +26,13 @@ export const ConfigurePage = (): ReactElement => {
           const domain = getDomainFromUrl(url);
           setForm((prev) => ({ ...prev, domain }));
 
-          localforage
-            .getItem<WebsiteConfigForm>(`config-${domain}`)
+          DomainConfigApi.get(domain)
             .then((data) => {
               if (data) {
                 setForm(data);
               }
             })
-            .catch(() => setForm({} as WebsiteConfigForm));
+            .catch(() => setForm({} as WebsiteConfig));
         }
       })
       .catch(() => alert("no domain found"));
@@ -44,7 +44,9 @@ export const ConfigurePage = (): ReactElement => {
     }
 
     const domain = form.domain;
-    await localforage.setItem(`config-${domain}`, form);
+    form.changeRequestIds = form.changeRequestIds || [];
+
+    await DomainConfigApi.set(domain, form);
 
     navigate(`/domain/${domain}`);
   };

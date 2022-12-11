@@ -6,7 +6,7 @@ setupLocalForage();
 
 function App() {
   return (
-    <div className="App h-full bg-neutral-100 p-6 text-base">
+    <div className="App h-full bg-neutral-100 p-6 text-base text-neutral-800">
       <Routes />
     </div>
   );
