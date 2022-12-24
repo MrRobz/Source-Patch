@@ -7,6 +7,7 @@ export interface ChangeRequest {
 }
 
 export interface ChangeItem {
+  id: number;
   fileName: string;
   fromText: string;
   toText: string;
