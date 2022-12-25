@@ -8,7 +8,7 @@ export const ChangeRequestApi = {
     return await localforage.setItem<ChangeRequest>(`change-request-${id}`, {
       id,
       title: `Change request - ${new Date(id).toLocaleDateString()}`,
-      changeItems: [],
+      fileChanges: {},
     });
   },
   get: async (id: number) => {

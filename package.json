@@ -12,6 +12,10 @@
   "dependencies": {
     "@headlessui/react": "^1.7.3",
     "@octokit/rest": "^19.0.5",
+    "@uiw/codemirror-extensions-basic-setup": "^4.19.4",
+    "@uiw/codemirror-extensions-langs": "^4.19.4",
+    "@uiw/codemirror-theme-github": "^4.19.4",
+    "@uiw/react-codemirror": "^4.19.4",
     "isomorphic-fetch": "^3.0.0",
     "localforage": "^1.10.0",
     "react": "^18.2.0",

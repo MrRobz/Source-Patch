@@ -3,12 +3,16 @@ export interface ChangeRequest {
   title: string;
   desc?: string;
   status?: string;
-  changeItems: ChangeItem[];
+  fileChanges: {
+    [file: string]: FileChange;
+  };
 }
 
-export interface ChangeItem {
-  id: number;
+export interface FileChange {
   fileName: string;
+  filePath: string;
   fromText: string;
   toText: string;
+  createdAt: number;
+  updatedAt: number;
 }

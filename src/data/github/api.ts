@@ -29,13 +29,13 @@ export const GithubApi = {
     const [owner, name] = extractOwnerRepoNameFromUrl(domainConfig.githubRepoUrl);
     const repoName = `${owner}/${name}`;
 
-    let fileQuery = "";
-    if (domainConfig.isSpecificFileForTranslations && domainConfig.translationsFilePath) {
-      const path = domainConfig.translationsFilePath.replace(/^\//, "").split("/");
-      const filename = path.pop() ?? "";
+    const fileQuery = "";
+    // if (domainConfig.isSpecificFileForTranslations && domainConfig.translationsFilePath) {
+    //   const path = domainConfig.translationsFilePath.replace(/^\//, "").split("/");
+    //   const filename = path.pop() ?? "";
 
-      fileQuery = `filename:${filename} path:${path.join("/")} `;
-    }
+    //   fileQuery = `filename:${filename} path:${path.join("/")} `;
+    // }
 
     const results = await octokit.rest.search.code({
       headers: {

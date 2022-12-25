@@ -1,6 +1,6 @@
 import { ReactComponent as BackIcon } from "assets/arrow-left.svg";
 import { H1 } from "components/ui/typography";
-import { ChangeRequest } from "data/change-request/types";
+import { ChangeRequest, FileChange } from "data/change-request/types";
 import { ReactElement, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -10,6 +10,7 @@ import { CodeSearchResultItem } from "data/github/types";
 import { GithubApi } from "data/github/api";
 import { SearchResult } from "./search-result";
 import { FileContentEditor } from "./file-content-editor";
+import { ChangeRequestApi } from "data/change-request/api";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
@@ -17,6 +18,7 @@ export const ChangeRequestShow = (): ReactElement => {
   const [changeRequest, setChangeRequest] = useState<ChangeRequest>();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchResults, setSearchResults] = useState<CodeSearchResultItem[]>();
+  const [fileName, setFileName] = useState<string>();
   const [filePathToEdit, setFilePathToEdit] = useState<string>();
 
   useLoadChangeRequest(setChangeRequest);
@@ -34,14 +36,37 @@ export const ChangeRequestShow = (): ReactElement => {
     }
   };
 
-  const onEditFile = async (searchResult: CodeSearchResultItem) => {
+  const onEditFileTrigger = async (searchResult: CodeSearchResultItem) => {
     const path = searchResult.path;
 
     setFilePathToEdit(path);
+    setFileName(searchResult.name);
   };
 
-  if (filePathToEdit) {
-    return <FileContentEditor path={filePathToEdit} onCancel={() => setFilePathToEdit()} />;
+  const onEditFileSave = async (fileChange: FileChange) => {
+    if (changeRequest) {
+      const clone = { ...changeRequest } as ChangeRequest;
+
+      clone.fileChanges = clone.fileChanges || {};
+      clone.fileChanges[fileChange.filePath] = fileChange;
+      setChangeRequest(clone);
+
+      await ChangeRequestApi.set(Number(id), clone);
+    }
+    setSearchResults([]);
+    setFilePathToEdit(undefined);
+  };
+
+  if (fileName && filePathToEdit) {
+    return (
+      <FileContentEditor
+        path={filePathToEdit}
+        fileName={fileName}
+        onCancel={() => setFilePathToEdit(undefined)}
+        fileChange={changeRequest?.fileChanges?.[filePathToEdit]}
+        onEditFileSave={onEditFileSave}
+      />
+    );
   }
 
   return (
@@ -50,11 +75,9 @@ export const ChangeRequestShow = (): ReactElement => {
         <BackIcon className="mb-3 mr-2 cursor-pointer hover:text-primary-700" onClick={() => navigate(-1)} />
         {changeRequest?.title}
       </H1>
-      <div className="ml-3 mt-3 text-neutral-600">
-        {changeRequest?.desc ?? "No description added. Check to add one."}
-      </div>
+      <div className="mt-3 text-neutral-600">{changeRequest?.desc ?? "No description added. Check to add one."}</div>
 
-      <div className="mt-4">
+      <div className="mt-6">
         <label htmlFor="code-text-search" className="text-md font-bold">
           Search for text to replace
         </label>
@@ -71,13 +94,13 @@ export const ChangeRequestShow = (): ReactElement => {
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-6">
         <div className="text-md font-bold">Matches found:</div>
 
-        <div className="mt-4 max-h-96 overflow-y-auto">
+        <div className="mt-2 max-h-96 overflow-y-auto">
           <div className="flex flex-col gap-4">
             {searchResults?.map((searchResult) => (
-              <SearchResult key={searchResult.name} searchResult={searchResult} onEditFile={onEditFile} />
+              <SearchResult key={searchResult.name} searchResult={searchResult} onEditFile={onEditFileTrigger} />
             ))}
 
             {searchResults && !searchResults.length && (
@@ -89,7 +112,7 @@ export const ChangeRequestShow = (): ReactElement => {
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <div className="text-md font-bold">File changes made:</div>
       </div>
     </div>
