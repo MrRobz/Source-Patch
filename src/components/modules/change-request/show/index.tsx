@@ -1,46 +1,48 @@
 import { ReactComponent as BackIcon } from "assets/arrow-left.svg";
 import { H1 } from "components/ui/typography";
-import { ChangeRequestApi } from "data/change-request/api";
-import { ChangeRequest, ChangeItem } from "data/change-request/types";
-import { ReactElement, useEffect, useState } from "react";
+import { ChangeRequest } from "data/change-request/types";
+import { ReactElement, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ReactComponent as PlusIcon } from "assets/plus.svg";
-import { ListItem } from "./list-item";
+
+import { useLoadChangeRequest } from "./hooks/use-load-change-request";
+import { Button, Input } from "components/ui";
+import { CodeSearchResultItem } from "data/github/types";
+import { GithubApi } from "data/github/api";
+import { SearchResult } from "./search-result";
+import { FileContentEditor } from "./file-content-editor";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
   const navigate = useNavigate();
   const [changeRequest, setChangeRequest] = useState<ChangeRequest>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchResults, setSearchResults] = useState<CodeSearchResultItem[]>();
+  const [filePathToEdit, setFilePathToEdit] = useState<string>();
 
-  useEffect(() => {
-    ChangeRequestApi.get(Number(id))
-      .then((item) => setChangeRequest(item ?? undefined))
-      .catch(() => setChangeRequest(undefined));
-  }, [id]);
+  useLoadChangeRequest(setChangeRequest);
 
-  const onCreateChange = async () => {
-    if (changeRequest) {
-      const changeRequestClone = { ...changeRequest };
-      const changeItem = { id: Date.now() } as ChangeItem;
-      changeRequestClone.changeItems.push(changeItem);
+  const onSearch = async () => {
+    const searchText = searchInputRef.current?.value;
 
-      await ChangeRequestApi.set(Number(id), changeRequestClone);
-      setChangeRequest(changeRequestClone);
+    if (!searchText) {
+      return;
+    }
 
-      navigate(`/domain/${domain}/change-request/${id}/change-item/${changeItem.id}`);
+    const results = await GithubApi.search({ domain, searchText });
+    if (results) {
+      setSearchResults(results);
     }
   };
 
-  const onDeleteChange = (item: ChangeItem) => {
-    if (changeRequest) {
-      const changeRequestClone = { ...changeRequest };
+  const onEditFile = async (searchResult: CodeSearchResultItem) => {
+    const path = searchResult.path;
 
-      changeRequestClone.changeItems = changeRequestClone.changeItems?.filter((o) => o.id !== item.id);
-
-      ChangeRequestApi.set(Number(id), changeRequestClone).catch(() => {});
-      setChangeRequest(changeRequestClone);
-    }
+    setFilePathToEdit(path);
   };
+
+  if (filePathToEdit) {
+    return <FileContentEditor path={filePathToEdit} onCancel={() => setFilePathToEdit()} />;
+  }
 
   return (
     <div className="w-ful h-full">
@@ -53,27 +55,42 @@ export const ChangeRequestShow = (): ReactElement => {
       </div>
 
       <div className="mt-4">
-        <div className="flex h-14 items-center justify-start rounded-t bg-white px-6">
-          <span className="text-xs font-bold uppercase text-neutral-600">List of changes</span>
+        <label htmlFor="code-text-search" className="text-md font-bold">
+          Search for text to replace
+        </label>
+        <div className="mt-2 flex gap-2">
+          <Input
+            name="code-text-search"
+            className="h-12 w-full"
+            placeholder="Type text here and hit search"
+            ref={searchInputRef}
+          />
+          <Button type="primary" onClick={onSearch}>
+            Search
+          </Button>
         </div>
+      </div>
 
-        <div className="flex max-h-96 flex-col overflow-scroll bg-white">
-          {changeRequest?.changeItems.map((item, idx) => (
-            <ListItem key={item.id} item={item} position={idx + 1} onDelete={onDeleteChange} />
-          ))}
-        </div>
+      <div className="mt-4">
+        <div className="text-md font-bold">Matches found:</div>
 
-        <div
-          className="group flex h-16 cursor-pointer items-center justify-start rounded-b bg-primary-100 px-6"
-          onClick={onCreateChange}
-        >
-          <div className="flex items-center justify-start gap-3">
-            <div className="rounded-full bg-primary-200 group-hover:bg-primary-500">
-              <PlusIcon className="text-primary-600 group-hover:text-white" />
-            </div>
-            <span className="text-sm font-bold text-primary-600">Add Change</span>
+        <div className="mt-4 max-h-96 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            {searchResults?.map((searchResult) => (
+              <SearchResult key={searchResult.name} searchResult={searchResult} onEditFile={onEditFile} />
+            ))}
+
+            {searchResults && !searchResults.length && (
+              <div>
+                <span>No results found</span>
+              </div>
+            )}
           </div>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <div className="text-md font-bold">File changes made:</div>
       </div>
     </div>
   );

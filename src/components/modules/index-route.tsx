@@ -1,8 +1,8 @@
 import { ReactElement, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDomainFromUrl } from "../../utils";
-import { WebsiteConfigForm } from "./configure/types";
 import localforage from "localforage";
+import { WebsiteConfig } from "data/domain-config/types";
 
 export const IndexRoute = (): ReactElement => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const IndexRoute = (): ReactElement => {
           const domain = getDomainFromUrl(url);
 
           localforage
-            .getItem<WebsiteConfigForm>(`config-${domain}`)
+            .getItem<WebsiteConfig>(`config-${domain}`)
             .then((data) => {
               if (data) {
                 navigate(`domain/${data.domain}`);

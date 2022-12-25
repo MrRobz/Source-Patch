@@ -1,6 +1,6 @@
-import { WebsiteConfigForm } from "../types";
+import { WebsiteConfig } from "data/domain-config/types";
 
-export const checkIfFormValid = (form: WebsiteConfigForm): boolean => {
+export const checkIfFormValid = (form: WebsiteConfig): boolean => {
   if (!form.domain || !form.githubRepoUrl) {
     return false;
   }

@@ -27,10 +27,6 @@ const router = createMemoryRouter([
     path: "/domain/:domain/change-request/:id",
     element: <ChangeRequestShow />,
   },
-  {
-    path: "/domain/:domain/change-request/:id/change-item/:changeItemId",
-    element: <>hello</>,
-  },
 ]);
 
 export const Routes = (): ReactElement => {

@@ -1,21 +1,25 @@
-import { ReactElement } from "react";
+import { forwardRef, InputHTMLAttributes, ReactElement } from "react";
 
-interface Props {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   placeholder?: string;
   className?: string;
   name?: string;
-  onChange?: (val: string) => void;
 }
 
-export const Input = ({ value, placeholder, name, className = "", onChange }: Props): ReactElement => {
+export const Input = forwardRef<HTMLInputElement, Props>((props, ref): ReactElement => {
+  const { value, placeholder, name, className = "", ...rest } = props;
+
   return (
     <input
-      className={`h-10 border px-3 py-4 placeholder:text-neutral-600 ${className}`}
+      ref={ref}
+      className={`${className} h-10 border px-3 py-4 placeholder:text-neutral-600`}
       placeholder={placeholder}
       name={name}
       value={value}
-      onChange={(e) => onChange?.(e.target.value)}
+      {...rest}
     />
   );
-};
+});
+
+Input.displayName = "Input";

@@ -2,7 +2,6 @@ import { ReactElement, useEffect, useState } from "react";
 import { getDomainFromUrl } from "../../../utils";
 import { Button, Input, Segmented } from "../../ui";
 import { H1, SubTitle } from "../../ui/typography";
-import localforage from "localforage";
 import { checkIfFormValid } from "./utils/check-if-form-valid";
 import { useNavigate } from "react-router-dom";
 import { WebsiteConfig } from "data/domain-config/types";
@@ -71,7 +70,7 @@ export const ConfigurePage = (): ReactElement => {
                 className="w-full"
                 name="github-url"
                 value={form.githubRepoUrl}
-                onChange={(val) => setForm((prev) => ({ ...prev, githubRepoUrl: val }))}
+                onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubRepoUrl: value }))}
               />
             </div>
 
@@ -92,7 +91,8 @@ export const ConfigurePage = (): ReactElement => {
                     placeholder="Enter github PAT"
                     className="mt-3"
                     name="github-pat"
-                    onChange={(val) => setForm((prev) => ({ ...prev, githubPat: val }))}
+                    value={form.githubPat}
+                    onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubPat: value }))}
                   />
                 )}
               </div>
@@ -117,7 +117,8 @@ export const ConfigurePage = (): ReactElement => {
                     placeholder="Enter path to the file"
                     className="mt-3"
                     name="translations-file-path"
-                    onChange={(val) => setForm((prev) => ({ ...prev, translationsFilePath: val }))}
+                    value={form.translationsFilePath}
+                    onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, translationsFilePath: value }))}
                   />
                 )}
               </div>

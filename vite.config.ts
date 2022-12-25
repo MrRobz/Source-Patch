@@ -8,4 +8,9 @@ import manifest from "./manifest.json";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svgr(), tsconfigPaths(), react(), crx({ manifest })],
+  resolve: {
+    alias: {
+      "node-fetch": "isomorphic-fetch",
+    },
+  },
 });

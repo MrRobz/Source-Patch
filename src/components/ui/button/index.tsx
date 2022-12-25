@@ -1,7 +1,7 @@
 import { PropsWithChildren, ReactElement } from "react";
 
 const sizeStyles = {
-  s: "",
+  s: "px-4 py-2 text-xs",
   m: "px-4 py-3 text-sm",
   l: "",
 };
@@ -32,7 +32,11 @@ export const Button = ({
   const styles = `${typeStyles[type]} ${sizeStyles[size]} ${disabledStyles} ${focusStyles}`;
 
   return (
-    <button className={`rounded font-bold ${styles}`} disabled={disabled} onClick={onClick}>
+    <button
+      className={`flex items-center justify-center rounded font-bold ${styles}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
