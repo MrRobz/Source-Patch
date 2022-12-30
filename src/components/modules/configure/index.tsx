@@ -1,16 +1,11 @@
 import { ReactElement, useEffect, useState } from "react";
 import { getDomainFromUrl } from "../../../utils";
-import { Button, Input, Segmented } from "../../ui";
+import { Button, Input } from "../../ui";
 import { H1, SubTitle } from "../../ui/typography";
 import { checkIfFormValid } from "./utils/check-if-form-valid";
 import { useNavigate } from "react-router-dom";
 import { WebsiteConfig } from "data/domain-config/types";
 import { DomainConfigApi } from "data/domain-config/api";
-
-const yesNoOptions = [
-  { label: "Yes", value: true },
-  { label: "No", value: false },
-];
 
 export const ConfigurePage = (): ReactElement => {
   const navigate = useNavigate();
@@ -37,7 +32,7 @@ export const ConfigurePage = (): ReactElement => {
       .catch(() => alert("no domain found"));
   }, []);
 
-  const onSumbit = async () => {
+  const onSubmit = async () => {
     if (!checkIfFormValid(form)) {
       alert("Please fill in all form fields.");
     }
@@ -55,7 +50,7 @@ export const ConfigurePage = (): ReactElement => {
       <div className="h-full w-full text-neutral-800">
         <div>
           <H1>Configuration</H1>
-          <SubTitle>Link your github repo to the website to make text changes.</SubTitle>
+          <SubTitle>Link your github repo to this website to make code changes.</SubTitle>
         </div>
 
         <div className="mt-4 rounded bg-white p-6 shadow-sm">
@@ -75,52 +70,27 @@ export const ConfigurePage = (): ReactElement => {
             </div>
 
             <div className="mt-9">
-              <label className="text-lg font-semibold">Is the github repo private?</label>
-
-              <div className="mt-4">
-                <Segmented
-                  options={yesNoOptions}
-                  selected={yesNoOptions.find((o) => o.value === form.isGithubRepoPrivate) ?? yesNoOptions[1]}
-                  onChange={(option) => {
-                    setForm((prev) => ({ ...prev, isGithubRepoPrivate: option.value }));
-                  }}
-                />
-
-                {form.isGithubRepoPrivate && (
-                  <Input
-                    placeholder="Enter github PAT"
-                    className="mt-3"
-                    name="github-pat"
-                    value={form.githubPat}
-                    onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubPat: value }))}
-                  />
-                )}
+              <label className="text-lg font-semibold">Enter your Github personal access token</label>
+              <div className="text-sm">
+                Click{" "}
+                <a
+                  className="cursor-pointer text-blue-700 hover:text-blue-900"
+                  href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  here
+                </a>{" "}
+                to learn how to generate one.
               </div>
-            </div>
-
-            <div className="mt-9">
-              <label className="text-lg font-semibold">
-                Is there a specific file where all the translations are stored?
-              </label>
 
               <div className="mt-4">
-                <Segmented
-                  options={yesNoOptions}
-                  selected={yesNoOptions.find((o) => o.value === form.isSpecificFileForTranslations) ?? yesNoOptions[1]}
-                  onChange={(option) => {
-                    setForm((prev) => ({ ...prev, isSpecificFileForTranslations: option.value }));
-                  }}
+                <Input
+                  placeholder="Enter github PAT"
+                  name="github-pat"
+                  value={form.githubPat}
+                  onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubPat: value }))}
                 />
-
-                {form.isSpecificFileForTranslations && (
-                  <Input
-                    placeholder="Enter path to the file"
-                    className="mt-3"
-                    name="translations-file-path"
-                    value={form.translationsFilePath}
-                    onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, translationsFilePath: value }))}
-                  />
-                )}
               </div>
             </div>
           </div>
@@ -128,7 +98,7 @@ export const ConfigurePage = (): ReactElement => {
       </div>
 
       <div className="mt-6 flex justify-end gap-4">
-        <Button type="primary" onClick={onSumbit}>
+        <Button type="primary" onClick={onSubmit}>
           save
         </Button>
       </div>

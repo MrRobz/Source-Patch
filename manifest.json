@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Update text in code",
+  "name": "Source Patch",
   "version": "1.0.0",
   "action": {
     "default_popup": "index.html"

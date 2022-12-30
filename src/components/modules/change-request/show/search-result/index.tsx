@@ -4,7 +4,7 @@ import { ReactElement } from "react";
 
 interface Props {
   searchResult: CodeSearchResultItem;
-  onEditFile: (searchResult: CodeSearchResultItem) => void;
+  onEditFile: (file: { name: string; path: string }) => void;
 }
 
 export const SearchResult = ({ searchResult, onEditFile }: Props): ReactElement => {
@@ -23,7 +23,7 @@ export const SearchResult = ({ searchResult, onEditFile }: Props): ReactElement 
           ))}
       </div>
       <div className="flex justify-end border-t bg-white px-4 py-2">
-        <Button size="s" onClick={() => onEditFile(searchResult)}>
+        <Button size="s" onClick={() => onEditFile({ name: searchResult.name, path: searchResult.path })}>
           Edit file
         </Button>
       </div>

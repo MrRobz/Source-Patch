@@ -5,11 +5,7 @@ export const checkIfFormValid = (form: WebsiteConfig): boolean => {
     return false;
   }
 
-  if (form.isGithubRepoPrivate && !form.githubPat) {
-    return false;
-  }
-
-  if (form.isSpecificFileForTranslations && !form.translationsFilePath) {
+  if (!form.githubPat) {
     return false;
   }
 

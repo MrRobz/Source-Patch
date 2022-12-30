@@ -47,7 +47,7 @@ export const FileContentEditor = ({ path, fileName, fileChange, onCancel, onEdit
         const results = await GithubApi.getFileContents({ domain, path });
 
         if (results?.content) {
-          const contents = window.atob(results?.content);
+          const contents = decodeURIComponent(escape(window.atob(results.content)));
 
           originalFileContentsRef.current = contents;
           setUpdatedFileContents(contents);

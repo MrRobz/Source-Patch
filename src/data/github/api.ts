@@ -2,19 +2,16 @@ import { Octokit } from "@octokit/rest";
 import { DomainConfigApi } from "data/domain-config/api";
 import { WebsiteConfig } from "data/domain-config/types";
 import { CodeSearchResultItem, GithubFileContents } from "./types";
+import { createPullRequest } from "octokit-plugin-create-pull-request";
+import { ChangeRequest } from "data/change-request/types";
+import { extractOwnerRepoNameFromUrl } from "utils";
+
+const MyOctokit = Octokit.plugin(createPullRequest);
 
 const initializeOctokit = async (domainConfig: WebsiteConfig | null) => {
   const config = domainConfig?.githubPat ? { auth: domainConfig?.githubPat } : {};
 
-  return new Octokit(config);
-};
-
-const extractOwnerRepoNameFromUrl = (url: string): [string, string] => {
-  const urlSplit = url.split("/");
-  const name = urlSplit.at(-1) ?? "";
-  const owner = urlSplit.at(-2) ?? "";
-
-  return [owner, name];
+  return new MyOctokit(config);
 };
 
 export const GithubApi = {
@@ -41,7 +38,7 @@ export const GithubApi = {
       headers: {
         Accept: "application/vnd.github.text-match+json",
       },
-      q: `${searchText} repo:${repoName} in:file ${fileQuery}`.trim(),
+      q: `${searchText} repo:${repoName} ${fileQuery}`.trim(),
     });
 
     return results.data.items as CodeSearchResultItem[];
@@ -64,5 +61,37 @@ export const GithubApi = {
     });
 
     return result.data as GithubFileContents;
+  },
+
+  submitPR: async ({ domain, changeRequest }: { domain: string; changeRequest: ChangeRequest }) => {
+    const domainConfig = await DomainConfigApi.get(domain);
+
+    if (!domainConfig) {
+      return;
+    }
+
+    const octokit = await initializeOctokit(domainConfig);
+    const [owner, name] = extractOwnerRepoNameFromUrl(domainConfig.githubRepoUrl);
+
+    const commitChange: { [path: string]: { content: string; encoding: "utf-8" | "base64" } } = {};
+    for (const key in changeRequest.fileChanges) {
+      const fileChange = changeRequest.fileChanges[key];
+      commitChange[fileChange.filePath] = {
+        content: fileChange.toText,
+        encoding: "utf-8",
+      };
+    }
+
+    const response = await octokit.createPullRequest({
+      owner,
+      repo: name,
+      title: changeRequest.title,
+      body: changeRequest.desc ?? "pull request description",
+      head: changeRequest.pullRequest?.branchName ?? `source-patch/${new Date().valueOf()}`,
+      update: true,
+      changes: { files: commitChange, commit: changeRequest.title || "updating code" },
+    });
+
+    return response?.data;
   },
 };

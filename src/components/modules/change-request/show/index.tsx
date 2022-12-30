@@ -1,9 +1,9 @@
 import { ReactComponent as BackIcon } from "assets/arrow-left.svg";
+import { ReactComponent as CheckIcon } from "assets/check.svg";
 import { H1 } from "components/ui/typography";
 import { ChangeRequest, FileChange } from "data/change-request/types";
 import { ReactElement, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { useLoadChangeRequest } from "./hooks/use-load-change-request";
 import { Button, Input } from "components/ui";
 import { CodeSearchResultItem } from "data/github/types";
@@ -11,6 +11,8 @@ import { GithubApi } from "data/github/api";
 import { SearchResult } from "./search-result";
 import { FileContentEditor } from "./file-content-editor";
 import { ChangeRequestApi } from "data/change-request/api";
+import { FileChangeMadeCard } from "./file-change-made-card";
+import { isEmptyObj } from "utils";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
@@ -20,8 +22,7 @@ export const ChangeRequestShow = (): ReactElement => {
   const [searchResults, setSearchResults] = useState<CodeSearchResultItem[]>();
   const [fileName, setFileName] = useState<string>();
   const [filePathToEdit, setFilePathToEdit] = useState<string>();
-
-  useLoadChangeRequest(setChangeRequest);
+  const changedFileNames = Object.keys(changeRequest?.fileChanges || {});
 
   const onSearch = async () => {
     const searchText = searchInputRef.current?.value;
@@ -36,11 +37,9 @@ export const ChangeRequestShow = (): ReactElement => {
     }
   };
 
-  const onEditFileTrigger = async (searchResult: CodeSearchResultItem) => {
-    const path = searchResult.path;
-
+  const onEditFileTrigger = async ({ name, path }: { name: string; path: string }) => {
     setFilePathToEdit(path);
-    setFileName(searchResult.name);
+    setFileName(name);
   };
 
   const onEditFileSave = async (fileChange: FileChange) => {
@@ -56,6 +55,32 @@ export const ChangeRequestShow = (): ReactElement => {
     setSearchResults([]);
     setFilePathToEdit(undefined);
   };
+
+  const onDeleteFileChange = async ({ name, path }: { name: string; path: string }) => {
+    if (changeRequest) {
+      const clone = { ...changeRequest } as ChangeRequest;
+
+      clone.fileChanges = clone.fileChanges || {};
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete clone.fileChanges[path];
+      setChangeRequest(clone);
+
+      await ChangeRequestApi.set(Number(id), clone);
+    }
+  };
+
+  const onSubmit = () => {
+    if (changeRequest) {
+      if (isEmptyObj(changeRequest.fileChanges)) {
+        alert("You need to update at least one file to create a change request.");
+        return;
+      }
+
+      navigate(`/domain/${domain}/change-request/${id}/submit`);
+    }
+  };
+
+  useLoadChangeRequest(setChangeRequest);
 
   if (fileName && filePathToEdit) {
     return (
@@ -114,6 +139,32 @@ export const ChangeRequestShow = (): ReactElement => {
 
       <div className="mt-6">
         <div className="text-md font-bold">File changes made:</div>
+
+        <div className="mt-2 max-h-96 overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            {changedFileNames?.map((fileName) => (
+              <FileChangeMadeCard
+                key={fileName}
+                fileChange={changeRequest?.fileChanges[fileName]}
+                onEditFile={onEditFileTrigger}
+                onDeleteFileChange={onDeleteFileChange}
+              />
+            ))}
+
+            {changedFileNames && !changedFileNames.length && (
+              <div>
+                <span>No files changed</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <Button type="primary" onClick={onSubmit}>
+          <CheckIcon className="mr-2 h-3 w-3" />
+          Create change request
+        </Button>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ export interface ChangeRequest {
   fileChanges: {
     [file: string]: FileChange;
   };
+  pullRequest?: PullRequestInfo;
 }
 
 export interface FileChange {
@@ -15,4 +16,10 @@ export interface FileChange {
   toText: string;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface PullRequestInfo {
+  id: number;
+  url: string;
+  branchName: string;
 }

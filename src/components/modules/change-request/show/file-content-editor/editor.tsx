@@ -1,8 +1,9 @@
-import { ReactElement, useCallback, useMemo } from "react";
-import CodeMirror from "@uiw/react-codemirror";
+import { ReactElement, useMemo, useEffect, useRef } from "react";
+import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { languageExtensionMappings } from "./constants/language-extension-mappings";
+import { openSearchPanel } from "@codemirror/search";
 
 interface Props {
   content: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export const Editor = ({ fileName, content, onChange }: Props): ReactElement => {
+  const editorApi = useRef<ReactCodeMirrorRef>(null);
+
   const language = useMemo(() => {
     const fileExt = fileName.split(".").pop() as keyof typeof languageExtensionMappings;
 
@@ -21,8 +24,15 @@ export const Editor = ({ fileName, content, onChange }: Props): ReactElement => 
     }
   }, [fileName]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (editorApi.current?.view) openSearchPanel(editorApi.current?.view);
+    }, 500);
+  }, []);
+
   return (
     <CodeMirror
+      ref={editorApi}
       value={content}
       autoFocus
       height="calc(100vh - 170px)"
