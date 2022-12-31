@@ -10,7 +10,9 @@ import { useClearLastViewedStore } from "utils/hooks";
 
 export const ConfigurePage = (): ReactElement => {
   const navigate = useNavigate();
-  const [form, setForm] = useState<WebsiteConfig>({} as WebsiteConfig);
+  const [form, setForm] = useState<WebsiteConfig>({
+    githubPat: localStorage.getItem("git-pat-prev") ?? "",
+  } as WebsiteConfig);
 
   const onSubmit = async () => {
     if (!checkIfFormValid(form)) {
@@ -20,6 +22,7 @@ export const ConfigurePage = (): ReactElement => {
     const domain = form.domain;
     form.changeRequestIds = form.changeRequestIds || [];
 
+    localStorage.setItem("git-pat-prev", form.githubPat);
     await DomainConfigApi.set(domain, form);
 
     navigate(`/domain/${domain}`);
