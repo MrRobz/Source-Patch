@@ -82,7 +82,7 @@ export const GithubApi = {
       owner,
       repo: name,
       title: changeRequest.title,
-      body: changeRequest.desc ?? "pull request description",
+      body: `${changeRequest?.desc ?? ""} \n \n This PR was made with Source Patch extension`,
       head: changeRequest.pullRequest?.branchName ?? `source-patch/${new Date().valueOf()}`,
       update: true,
       changes: { files: commitChange, commit: changeRequest.title || "updating code" },

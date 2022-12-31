@@ -16,6 +16,8 @@ import { isEmptyObj } from "utils";
 import { ReactComponent as SearchIcon } from "assets/search.svg";
 import { ReactComponent as PreferenceIcon } from "assets/preference.svg";
 import { SearchPreferenceModal } from "./search-preference-modal";
+import { UpdatableTitle } from "./title-desc/updatable-title";
+import { UpdatableDesc } from "./title-desc/updatable-desc";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
@@ -98,6 +100,17 @@ export const ChangeRequestShow = (): ReactElement => {
     }
   };
 
+  const onTitleDescChange = async (key: "title" | "desc", value: string) => {
+    if (changeRequest) {
+      const clone = { ...changeRequest } as ChangeRequest;
+
+      clone[key] = value;
+      setChangeRequest(clone);
+
+      await ChangeRequestApi.set(Number(id), clone);
+    }
+  };
+
   useLoadChangeRequest(setChangeRequest);
 
   useEffect(() => {
@@ -124,9 +137,11 @@ export const ChangeRequestShow = (): ReactElement => {
           className="mb-3 mr-2 cursor-pointer hover:text-primary-700"
           onClick={() => navigate(`/domain/${domain}`)}
         />
-        {changeRequest?.title}
+        <UpdatableTitle title={changeRequest?.title} onChange={async (val) => await onTitleDescChange("title", val)} />
       </H1>
-      <div className="mt-3 text-neutral-600">{changeRequest?.desc ?? "No description added. Check to add one."}</div>
+      <div className="mt-3 text-neutral-600">
+        <UpdatableDesc desc={changeRequest?.desc} onChange={async (val) => await onTitleDescChange("desc", val)} />
+      </div>
 
       <div className="mt-6">
         <label htmlFor="code-text-search" className="text-md font-bold">
