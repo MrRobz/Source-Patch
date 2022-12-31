@@ -35,7 +35,11 @@ export const ChangeRequestShow = (): ReactElement => {
     }
 
     setIsSearchLoading(true);
-    const results = await GithubApi.search({ domain, searchText }).catch(() => setIsSearchLoading(false));
+    const results = await GithubApi.search({ domain, searchText }).catch((error) => {
+      setIsSearchLoading(false);
+      alert(error);
+    });
+
     if (results) {
       setSearchResults(results);
     }
