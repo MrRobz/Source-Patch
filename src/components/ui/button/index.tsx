@@ -19,6 +19,7 @@ interface Props {
   type?: "primary" | "secondary" | "tertiary";
   size?: "s" | "m" | "l";
   disabled?: boolean;
+  className?: string;
   onClick?: () => void;
 }
 
@@ -26,6 +27,7 @@ export const Button = ({
   type = "tertiary",
   size = "m",
   disabled,
+  className = "",
   children,
   onClick,
 }: PropsWithChildren<Props>): ReactElement => {
@@ -33,7 +35,7 @@ export const Button = ({
 
   return (
     <button
-      className={`flex items-center justify-center rounded font-bold ${styles}`}
+      className={`flex items-center justify-center rounded font-bold ${styles} ${className}`}
       disabled={disabled}
       onClick={onClick}
     >
