@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Source Patch",
-  "version": "1.0.0",
+  "version": "0.0.1",
+  "description": "An extension for your browser that makes editing the source code of your website easy.",
   "action": {
     "default_popup": "index.html"
   },
@@ -11,11 +12,6 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-      "js": ["src/content-script/content.jsx"]
-    }
-  ],
-  "permissions": ["storage", "tabs", "unlimitedStorage"]
+  "content_scripts": [],
+  "permissions": ["activeTab", "unlimitedStorage"]
 }
