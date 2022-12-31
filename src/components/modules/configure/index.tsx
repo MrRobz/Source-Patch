@@ -56,8 +56,8 @@ export const ConfigurePage = (): ReactElement => {
         <div className="mt-4 rounded bg-white p-6 shadow-sm">
           <div>
             <label className="text-lg font-semibold" htmlFor="github-url">
-              Enter the url of the github repo where <span className="text-primary-700">{form.domain}</span>’s code base
-              is present.
+              Enter the url of the github repo where <span className="text-primary-700">{form.domain}</span>’s source
+              code is present.
             </label>
             <div className="mt-4">
               <Input
@@ -88,6 +88,7 @@ export const ConfigurePage = (): ReactElement => {
                 <Input
                   placeholder="Enter github PAT"
                   name="github-pat"
+                  className="w-full"
                   value={form.githubPat}
                   onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubPat: value }))}
                 />

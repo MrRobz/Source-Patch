@@ -104,7 +104,7 @@ export const ChangeRequestShow = (): ReactElement => {
 
       <div className="mt-6">
         <label htmlFor="code-text-search" className="text-md font-bold">
-          Search for text to replace
+          Search for any code or text that needs alteration
         </label>
         <div className="mt-2 flex gap-2">
           <Input

@@ -20,7 +20,7 @@ export const PrInfoBox = ({ prInfo, domainConfig }: Props): ReactElement => {
       </div>
       <div>
         <a
-          href="https://github.com/DrivetrainAi/drive-frontend/pull/3975"
+          href={prInfo?.url}
           target="_blank"
           rel="noreferrer"
           className="mt-2 flex w-full justify-center text-primary-600 hover:text-primary-700"

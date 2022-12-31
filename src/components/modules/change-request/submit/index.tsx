@@ -53,8 +53,10 @@ export const SubmitChangeRequest = (): ReactElement => {
               });
             }
           } catch (error: any) {
-            setError(error?.message || error?.response?.data);
-            setLoadingStatus("error");
+            if (error?.message !== "Reference cannot be updated") {
+              setError(error?.message || error?.response?.data);
+              setLoadingStatus("error");
+            }
           }
         }
       })
