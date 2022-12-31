@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getDomainFromUrl } from "../../utils";
 import localforage from "localforage";
 import { WebsiteConfig } from "data/domain-config/types";
+import { getLastViewedDomainChangeId } from "utils/last-viewed-items";
 
 export const IndexRoute = (): ReactElement => {
   const navigate = useNavigate();
@@ -19,7 +20,13 @@ export const IndexRoute = (): ReactElement => {
             .getItem<WebsiteConfig>(`config-${domain}`)
             .then((data) => {
               if (data) {
-                navigate(`domain/${data.domain}`);
+                const [lastViewDomain, lastViewedChangeId] = getLastViewedDomainChangeId();
+
+                if (lastViewDomain === domain && lastViewedChangeId) {
+                  navigate(`/domain/${data.domain}/change-request/${lastViewedChangeId}`);
+                } else {
+                  navigate(`domain/${data.domain}`);
+                }
               } else {
                 navigate("/configure");
               }

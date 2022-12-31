@@ -5,6 +5,7 @@ import { ReactComponent as BookIcon } from "assets/book.svg";
 import { ReactComponent as ConfigureIcon } from "assets/configure.svg";
 import { DomainConfigApi } from "data/domain-config/api";
 import { ChangeRequestApi } from "data/change-request/api";
+import { useClearLastViewedStore } from "utils/hooks";
 
 export const ViewOrCreateChangePage = (): ReactElement => {
   const { domain } = useParams() as { domain: string };
@@ -28,6 +29,8 @@ export const ViewOrCreateChangePage = (): ReactElement => {
       navigate(`/domain/${domain}/change-request/${timestampId}`);
     }
   };
+
+  useClearLastViewedStore();
 
   return (
     <div>

@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { H1 } from "components/ui/typography";
 import { ReactComponent as BackIcon } from "assets/arrow-left.svg";
 import { ListItem } from "./list-item";
+import { useClearLastViewedStore } from "utils/hooks";
 
 export const ChangeRequestListPage = (): ReactElement => {
   const { domain } = useParams() as { domain: string };
@@ -16,6 +17,8 @@ export const ChangeRequestListPage = (): ReactElement => {
       })
       .catch(() => {});
   }, [domain]);
+
+  useClearLastViewedStore();
 
   return (
     <div className="w-ful h-full">

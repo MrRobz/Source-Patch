@@ -2,7 +2,7 @@ import { ReactComponent as BackIcon } from "assets/arrow-left.svg";
 import { ReactComponent as CheckIcon } from "assets/check.svg";
 import { H1 } from "components/ui/typography";
 import { ChangeRequest, FileChange } from "data/change-request/types";
-import { KeyboardEventHandler, ReactElement, useRef, useState } from "react";
+import { KeyboardEventHandler, ReactElement, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoadChangeRequest } from "./hooks/use-load-change-request";
 import { Button, Input, Spinner } from "components/ui";
@@ -100,6 +100,11 @@ export const ChangeRequestShow = (): ReactElement => {
 
   useLoadChangeRequest(setChangeRequest);
 
+  useEffect(() => {
+    localStorage.setItem("last-viewed-domain", domain);
+    localStorage.setItem("last-viewed-changeId", id);
+  }, [domain, id]);
+
   if (fileName && filePathToEdit) {
     return (
       <FileContentEditor
@@ -115,7 +120,10 @@ export const ChangeRequestShow = (): ReactElement => {
   return (
     <div className="w-ful h-full">
       <H1 className="flex items-center">
-        <BackIcon className="mb-3 mr-2 cursor-pointer hover:text-primary-700" onClick={() => navigate(-1)} />
+        <BackIcon
+          className="mb-3 mr-2 cursor-pointer hover:text-primary-700"
+          onClick={() => navigate(`/domain/${domain}`)}
+        />
         {changeRequest?.title}
       </H1>
       <div className="mt-3 text-neutral-600">{changeRequest?.desc ?? "No description added. Check to add one."}</div>

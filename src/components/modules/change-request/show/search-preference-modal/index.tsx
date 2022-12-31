@@ -79,9 +79,8 @@ export const SearchPreferenceModal = ({ isOpen, onClose }: Props): ReactElement 
 
           <div className="mt-4 flex flex-col gap-1">
             <label className="text-sm font-bold text-neutral-800">Search in specific file</label>
-            <div className="text-xs">Don't include extension</div>
             <Input
-              placeholder="file name"
+              placeholder="file name without extension"
               value={searchPreference.file}
               onChange={(e) => {
                 updateSearchPreferenceState("file", e.target.value);

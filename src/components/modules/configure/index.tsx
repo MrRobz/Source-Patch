@@ -6,10 +6,26 @@ import { checkIfFormValid } from "./utils/check-if-form-valid";
 import { useNavigate } from "react-router-dom";
 import { WebsiteConfig } from "data/domain-config/types";
 import { DomainConfigApi } from "data/domain-config/api";
+import { useClearLastViewedStore } from "utils/hooks";
 
 export const ConfigurePage = (): ReactElement => {
   const navigate = useNavigate();
   const [form, setForm] = useState<WebsiteConfig>({} as WebsiteConfig);
+
+  const onSubmit = async () => {
+    if (!checkIfFormValid(form)) {
+      alert("Please fill in all form fields.");
+    }
+
+    const domain = form.domain;
+    form.changeRequestIds = form.changeRequestIds || [];
+
+    await DomainConfigApi.set(domain, form);
+
+    navigate(`/domain/${domain}`);
+  };
+
+  useClearLastViewedStore();
 
   useEffect(() => {
     chrome.tabs
@@ -31,19 +47,6 @@ export const ConfigurePage = (): ReactElement => {
       })
       .catch(() => alert("no domain found"));
   }, []);
-
-  const onSubmit = async () => {
-    if (!checkIfFormValid(form)) {
-      alert("Please fill in all form fields.");
-    }
-
-    const domain = form.domain;
-    form.changeRequestIds = form.changeRequestIds || [];
-
-    await DomainConfigApi.set(domain, form);
-
-    navigate(`/domain/${domain}`);
-  };
 
   return (
     <>

@@ -7,6 +7,7 @@ import { WebsiteConfig } from "data/domain-config/types";
 import { GithubApi } from "data/github/api";
 import { ReactElement, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useClearLastViewedStore } from "utils/hooks";
 import { ErrorBox } from "./error-box";
 import { LoadingBox } from "./loading-box";
 import { PrInfoBox } from "./pr-info-box";
@@ -64,6 +65,8 @@ export const SubmitChangeRequest = (): ReactElement => {
         setLoadingStatus("error");
       });
   }, [id]);
+
+  useClearLastViewedStore();
 
   return (
     <div className="w-ful h-full">
