@@ -70,6 +70,7 @@ export const ConfigurePage = (): ReactElement => {
                 placeholder="Enter github repo url"
                 className="w-full"
                 name="github-url"
+                autoComplete="on"
                 value={form.githubRepoUrl}
                 onChange={({ target: { value } }) => setForm((prev) => ({ ...prev, githubRepoUrl: value }))}
               />

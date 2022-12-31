@@ -18,6 +18,7 @@ import { ReactComponent as PreferenceIcon } from "assets/preference.svg";
 import { SearchPreferenceModal } from "./search-preference-modal";
 import { UpdatableTitle } from "./title-desc/updatable-title";
 import { UpdatableDesc } from "./title-desc/updatable-desc";
+import { PullRequestStatus } from "./pull-request-info";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
@@ -143,6 +144,8 @@ export const ChangeRequestShow = (): ReactElement => {
         <UpdatableDesc desc={changeRequest?.desc} onChange={async (val) => await onTitleDescChange("desc", val)} />
       </div>
 
+      {changeRequest?.pullRequest && <PullRequestStatus prData={changeRequest.pullRequest} />}
+
       <div className="mt-6">
         <label htmlFor="code-text-search" className="text-md font-bold">
           Search for any code or text that needs alteration
@@ -216,7 +219,7 @@ export const ChangeRequestShow = (): ReactElement => {
       <div className="mt-4 flex justify-end">
         <Button type="primary" onClick={onSubmit}>
           <CheckIcon className="mr-2 h-3 w-3" />
-          Create change request
+          {changeRequest?.pullRequest ? "Update change request" : "Create change request"}
         </Button>
       </div>
 

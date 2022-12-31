@@ -41,7 +41,7 @@ export const SubmitChangeRequest = (): ReactElement => {
             const response = await GithubApi.submitPR({ domain, changeRequest });
             if (response) {
               const prInfo = {
-                id: response.number,
+                pullNumber: response.number,
                 url: response.html_url,
                 branchName: response.head.ref,
               };
@@ -54,10 +54,12 @@ export const SubmitChangeRequest = (): ReactElement => {
               });
             }
           } catch (error: any) {
-            if (error?.message !== "Reference cannot be updated") {
-              setError(error?.message || error?.response?.data);
-              setLoadingStatus("error");
-            }
+            setTimeout(() => {
+              if (loadingStatus !== "loaded") {
+                setError(error?.message || error?.response?.data);
+                setLoadingStatus("error");
+              }
+            }, 5000);
           }
         }
       })

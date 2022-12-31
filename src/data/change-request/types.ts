@@ -19,7 +19,7 @@ export interface FileChange {
 }
 
 export interface PullRequestInfo {
-  id: number;
+  pullNumber: number;
   url: string;
   branchName: string;
 }

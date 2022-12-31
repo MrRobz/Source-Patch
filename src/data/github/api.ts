@@ -7,6 +7,7 @@ import { ChangeRequest } from "data/change-request/types";
 import { extractOwnerRepoNameFromUrl } from "utils";
 import { getSearchPreferenceLS } from "components/modules/change-request/show/search-preference-modal/utils";
 import { constructGithubSearchFilterQuery } from "./utils/construct-github-search-filter-query";
+import { generatePrBody } from "./utils/generate-pr-body";
 
 const MyOctokit = Octokit.plugin(createPullRequest);
 
@@ -59,6 +60,25 @@ export const GithubApi = {
     return result.data as GithubFileContents;
   },
 
+  getPrDetails: async ({ domain, pullNumber }: { domain: string; pullNumber: number }) => {
+    const domainConfig = await DomainConfigApi.get(domain);
+
+    if (!domainConfig) {
+      return;
+    }
+
+    const octokit = await initializeOctokit(domainConfig);
+    const [owner, repo] = extractOwnerRepoNameFromUrl(domainConfig.githubRepoUrl);
+
+    const result = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: pullNumber,
+    });
+
+    return result.data;
+  },
+
   submitPR: async ({ domain, changeRequest }: { domain: string; changeRequest: ChangeRequest }) => {
     const domainConfig = await DomainConfigApi.get(domain);
 
@@ -82,10 +102,13 @@ export const GithubApi = {
       owner,
       repo: name,
       title: changeRequest.title,
-      body: `${changeRequest?.desc ?? ""} \n \n This PR was made with Source Patch extension`,
+      body: generatePrBody(changeRequest),
       head: changeRequest.pullRequest?.branchName ?? `source-patch/${new Date().valueOf()}`,
       update: true,
-      changes: { files: commitChange, commit: changeRequest.title || "updating code" },
+      changes: {
+        files: commitChange,
+        commit: changeRequest.title || `updating files -${Object.keys(changeRequest.fileChanges).join(",")}`,
+      },
     });
 
     return response?.data;
