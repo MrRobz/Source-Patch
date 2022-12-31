@@ -15,6 +15,7 @@ import { FileChangeMadeCard } from "./file-change-made-card";
 import { isEmptyObj } from "utils";
 import { ReactComponent as SearchIcon } from "assets/search.svg";
 import { ReactComponent as PreferenceIcon } from "assets/preference.svg";
+import { SearchPreferenceModal } from "./search-preference-modal";
 
 export const ChangeRequestShow = (): ReactElement => {
   const { domain, id } = useParams() as { domain: string; id: string };
@@ -25,6 +26,8 @@ export const ChangeRequestShow = (): ReactElement => {
   const [fileName, setFileName] = useState<string>();
   const [filePathToEdit, setFilePathToEdit] = useState<string>();
   const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [isSearchPreferenceModalOpen, setIsSearchPreferenceModalOpen] = useState(false);
+
   const changedFileNames = Object.keys(changeRequest?.fileChanges || {});
 
   const onSearch = async () => {
@@ -121,6 +124,7 @@ export const ChangeRequestShow = (): ReactElement => {
         <label htmlFor="code-text-search" className="text-md font-bold">
           Search for any code or text that needs alteration
         </label>
+        <div className="text-sm">Wrap term in quotes(" ") to search as single term</div>
         <div className="mt-2 flex gap-2">
           <Input
             name="code-text-search"
@@ -134,7 +138,11 @@ export const ChangeRequestShow = (): ReactElement => {
               {isSearchLoading ? <Spinner className="mr-2 h-4 w-4" /> : <SearchIcon className="mr-2 h-4 w-4" />}
               Search
             </Button>
-            <Button className="rounded-l-none border-l border-white" type="primary">
+            <Button
+              className="rounded-l-none border-l border-white"
+              type="primary"
+              onClick={() => setIsSearchPreferenceModalOpen(true)}
+            >
               <PreferenceIcon className="h-4 w-4" />
             </Button>
           </div>
@@ -188,6 +196,11 @@ export const ChangeRequestShow = (): ReactElement => {
           Create change request
         </Button>
       </div>
+
+      <SearchPreferenceModal
+        isOpen={isSearchPreferenceModalOpen}
+        onClose={() => setIsSearchPreferenceModalOpen(false)}
+      />
     </div>
   );
 };

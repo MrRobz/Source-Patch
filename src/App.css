@@ -2,3 +2,7 @@
   width: 546px;
   font-family: "Epilogue", sans-serif;
 }
+
+input[type="checkbox"] {
+  accent-color: "#4945FF";
+}

@@ -5,6 +5,8 @@ import { CodeSearchResultItem, GithubFileContents } from "./types";
 import { createPullRequest } from "octokit-plugin-create-pull-request";
 import { ChangeRequest } from "data/change-request/types";
 import { extractOwnerRepoNameFromUrl } from "utils";
+import { getSearchPreferenceLS } from "components/modules/change-request/show/search-preference-modal/utils";
+import { constructGithubSearchFilterQuery } from "./utils/construct-github-search-filter-query";
 
 const MyOctokit = Octokit.plugin(createPullRequest);
 
@@ -26,13 +28,7 @@ export const GithubApi = {
     const [owner, name] = extractOwnerRepoNameFromUrl(domainConfig.githubRepoUrl);
     const repoName = `${owner}/${name}`;
 
-    const fileQuery = "";
-    // if (domainConfig.isSpecificFileForTranslations && domainConfig.translationsFilePath) {
-    //   const path = domainConfig.translationsFilePath.replace(/^\//, "").split("/");
-    //   const filename = path.pop() ?? "";
-
-    //   fileQuery = `filename:${filename} path:${path.join("/")} `;
-    // }
+    const fileQuery = constructGithubSearchFilterQuery();
 
     const results = await octokit.rest.search.code({
       headers: {
