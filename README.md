@@ -45,3 +45,7 @@ This app is built using [React](https://reactjs.org/) and [Typescript](https://w
    ```
 
 2. A dist folder would be created. In which your packaged app would be present.
+
+## :shield: Privacy Policy
+
+Source Patch doesn't track you or share/care about your data at all. GitHub tokens are only needed only to to access private repositories or exceed GitHub API rate limit. Source Patch stores tokens in your browser storage and only uses them to authenticate with GitHub.
