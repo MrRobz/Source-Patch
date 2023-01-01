@@ -1,6 +1,7 @@
-# Source Patch
+<h1 align="center">Source Patch</h1>
+<h3 align="center">Edit source code of your website without leaving your tab.</h3>
 
-Edit source code of your website without leaving your tab.
+<img width="1554" alt="icon-shelf" src="./screenshots/code-block.png">
 
 Source Patch is a chrome extension that can let you quickly make alterations to the source code for a website.
 
@@ -13,4 +14,34 @@ Features
 - Search file contents and update source code
 - Automatically create a pull request to GitHub with your changes
 
-For all feature requests or bug reports, please visit the GitHub repository and fill in an issue https://github.com/MrRobz/Source-Patch
+For all feature requests or bug reports, please fill in an issue.
+
+## :call_me_hand: Development
+
+This app is built using [React](https://reactjs.org/) and [Typescript](https://www.typescriptlang.org/). We use [Vite](https://vitejs.dev/) for bundling and building.
+
+### :zap: Quick Setup
+
+1. Install all app dependencies.
+
+   ```sh
+   npm install
+   ```
+
+2. Start the development.
+
+   ```sh
+   npm run dev
+   ```
+
+3. Go to extensions tab in chrome, click load unpacked and choose `dist` folder in this repo.
+
+### Building for Production
+
+1. Package.
+
+   ```sh
+   npm run build
+   ```
+
+2. A dist folder would be created. In which your packaged app would be present.

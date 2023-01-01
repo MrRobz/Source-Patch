@@ -9,7 +9,8 @@ export const generatePrBody = (changeRequest: ChangeRequest): string => {
     .map((name) => `* ${name}`)
     .join(" \n");
 
-  result += "\n \n \n \n This PR was made with Source Patch extension";
+  result +=
+    "\n \n \n \n This PR was made with [Source Patch](https://chrome.google.com/webstore/detail/source-patch/meldpjcodilmepbidcokobfflljecbbf) extension.";
 
   return result;
 };
